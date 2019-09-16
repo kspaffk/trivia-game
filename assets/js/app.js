@@ -5,15 +5,25 @@ function bigbangQuestion(qstn, answrs, rightA) {
     this.rightA = rightA;
 
     this.createHtmlContent = function() {
+        // create a div for the question and answers
         var contentDiv = $("<div class='content-div'>");
+        // create a div for the question
         var questionDiv = $("<div class='question-div'>").text(this.question);
+        // append the question to the content div
         contentDiv.append(questionDiv);
-        var formDiv = $("<form>");
+        // create divs for the answers
         for (var i = 0; i < this.ansLength; i++) {
-            formDiv.append('<input type="radio" name="answer" value="' 
-                + i + '" id="answer-' + i + '">' + this.answers[i] + '<br>');
+            // append the answer to the content div
+            contentDiv.append(
+                '<div class="answers" value="' +
+                    i +
+                    '" id="answer-' +
+                    i +
+                    '">' +
+                    this.answers[i]
+            );
         }
-        contentDiv.append(formDiv);
+        // return the content div
         return contentDiv;
     };
 }
@@ -65,44 +75,61 @@ var bigbangQList = [
     )
 ];
 
-$(document).ready(function() {
-    function gameInit() {
-        countdown();
-        var contentDiv = bigbangQList[questionIndex].createHtmlContent();
-        $("section").append(contentDiv);
-    }
+window.onload = function() {
+    var startBtn = $("<button class='start'>").text("Start");
+    $("section").append(startBtn);
 
-    function countdown() {
-        var countdownDiv = $("<div class='countdown'>");
-        $("section").append(countdownDiv);
-        intervalID = setInterval(function() {
-            $(".countdown").html("<h1>" + time + "</h1>");
-            time--;
+    $(".start").on("click", gameInit);
+    $(".answers").on("click", chooseAnswer);
+    // $(".answers").on("click", ???);
+};
 
-            if (time < 0) {
-                clearCountdown();
-                time = 25;
-            }
-        }, 1000);
-    }
+function gameInit() {
+    countdown();
+    var contentDiv = bigbangQList[questionIndex].createHtmlContent();
+    $("section").append(contentDiv);
+}
 
-    function clearCountdown() {
-        clearInterval(intervalID);
-
-        setTimeout(function() {
-            console.log("game over");
-            $("section").empty();
-            if (questionIndex < bigbangQList.length - 1) {
-                questionIndex++;
-            } else {
-                console.log("you win");
-                return false;
-            }
-
-            gameInit();
+function countdown() {
+    // add the countdown to the div
+    var countdownDiv = $("<div class='countdown'>");
+    $("section").append(countdownDiv);
+    //create the interval and time and decrease the time every second
+    intervalID = setInterval(function() {
+        $(".countdown").html("<h1>" + time + "</h1>");
+        time--;
+        
+        if (time < 0) {
+            clearCountdown();
+            time = 25;
         }
-        , 5000);
-    }
+        // capture the answer the user clicks on
+    }, 1000);
+}
 
-    gameInit();
-});
+function chooseAnswer() {
+    var elementValue = $(this).attr("value");
+    console.log(elementValue);
+    clearCountdown();
+}
+
+function clearCountdown() {
+    // clear the interval
+    clearInterval(intervalID);
+    // wait 5 secs and increase to the next question
+    setTimeout(function() {
+        console.log("game over");
+        $("section").empty();
+        if (questionIndex < bigbangQList.length - 1) {
+            questionIndex++;
+        } else {
+            console.log("you win");
+            return false;
+        }
+        //initialize the game again
+        gameInit();
+    }, 5000);
+}
+
+// initialize the game for the first time
+gameInit();
