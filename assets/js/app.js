@@ -4,33 +4,15 @@ function bigbangQuestion(qstn, answrs, rightA) {
     this.ansLength = answrs.length;
     this.rightA = rightA;
 
-    this.createHtmlContent = function() {
-        // create a div for the question and answers
-        var contentDiv = $("<div class='content-div'>");
-        // create a div for the question
-        var questionDiv = $("<div class='question-div'>").text(this.question);
-        // append the question to the content div
-        contentDiv.append(questionDiv);
-        // create divs for the answers
+    this.createContent = function() {
+        // insert question text
+        $(".question").text(this.question);
+        // insert answer text
         for (var i = 0; i < this.ansLength; i++) {
-            // append the answer to the content div
-            contentDiv.append(
-                '<div class="answers" value="' +
-                    i +
-                    '" id="answer-' +
-                    i +
-                    '">' +
-                    this.answers[i]
-            );
+            $("#answer-" + i).text(this.answers[i]);
         }
-        // return the content div
-        return contentDiv;
     };
 }
-
-var intervalID;
-var time = 25;
-var questionIndex = 0;
 
 var bigbangQList = [
     new bigbangQuestion(
@@ -75,61 +57,98 @@ var bigbangQList = [
     )
 ];
 
+var intervalID;
+var time = 25;
+var questionIndex = 0;
+var correctResponses = 0;
+
 window.onload = function() {
     var startBtn = $("<button class='start'>").text("Start");
-    $("section").append(startBtn);
-
+    $(".countdown").append(startBtn);
     $(".start").on("click", gameInit);
-    $(".answers").on("click", chooseAnswer);
-    // $(".answers").on("click", ???);
+    $(".click-answers").on("click", chooseAnswer);
 };
 
 function gameInit() {
+    questionIndex = 0;
+    correctResponses = 0;
+    $(".start").hide();
     countdown();
-    var contentDiv = bigbangQList[questionIndex].createHtmlContent();
-    $("section").append(contentDiv);
 }
 
 function countdown() {
-    // add the countdown to the div
-    var countdownDiv = $("<div class='countdown'>");
-    $("section").append(countdownDiv);
+    // insert the question content to the screen
+    var content = bigbangQList[questionIndex].createContent();
+    $("section").append(content);
+    $(".countdown").html("You have " + time + " seconds remaining.");
     //create the interval and time and decrease the time every second
     intervalID = setInterval(function() {
-        $(".countdown").html("<h1>" + time + "</h1>");
         time--;
-        
+        $(".countdown").html("You have " + time + " seconds remaining.");
+
         if (time < 0) {
             clearCountdown();
             time = 25;
+            $(".countdown").html("You ran out of time!");
         }
         // capture the answer the user clicks on
     }, 1000);
 }
 
 function chooseAnswer() {
+    // get the value of the item clicked on
     var elementValue = $(this).attr("value");
-    console.log(elementValue);
+    $(".answers").removeClass("click-answers");
+    // see if item clicked on is right answer
+    if (parseInt(elementValue) === bigbangQList[questionIndex].rightA) {
+        correctResponses++;
+        $(".countdown").html("You are right! You have now answered " + correctResponses + " questions correctly.");
+    } 
+    // its not the correct answer
+    else {
+        console.log("answer is not correct")
+        $(".countdown").html('Wrong! "Dolphins ... might be smarter than <em>some</em> people." -Leonard');
+        $("#answer-" + elementValue).addClass("answer-wrong");
+    }
     clearCountdown();
 }
 
 function clearCountdown() {
     // clear the interval
     clearInterval(intervalID);
+    time = 25;
+    // highlight the correct answer
+    $("#answer-" + bigbangQList[questionIndex].rightA).addClass("answer-correct");
     // wait 5 secs and increase to the next question
     setTimeout(function() {
-        console.log("game over");
-        $("section").empty();
+        console.log("question answered");
+        // get the next question
         if (questionIndex < bigbangQList.length - 1) {
             questionIndex++;
+        // end of questions - go to the end game screen
         } else {
-            console.log("you win");
+            console.log("end of question list");
+            endGame();
             return false;
         }
+        $(".answers").removeClass("answer-correct answer-wrong");
+        $(".answers").addClass("click-answers");
         //initialize the game again
-        gameInit();
-    }, 5000);
+        countdown();
+    }, 2000);
 }
 
-// initialize the game for the first time
-gameInit();
+function endGame() {
+    // clear out the answers divs for end game
+    $(".answers").removeClass("answer-correct answer-wrong");
+    $(".answers").empty();
+    // replace questions div with winning statement
+    if (correctResponses < 15) {
+        $(".question").html("You correctly answered <span class='number-correct'>" + correctResponses + "</span> questions out of 25. Would you care for a Milk Dud?");
+    } else if (correctResponses < 20) {
+        $(".question").html("You correctly answered <span class='number-correct'>" + correctResponses + "</span> questions out of 25. You can use Sheldon's parking spot!")
+    } else {
+        $(".question").html("You correctly answered <span class='number-correct'>" + correctResponses + "</span> questions out of 25. Sheldon honors you with a napkin with the DNA of Lenord Nimoy!")
+    }
+    $(".start").show().text("Restart");
+}
