@@ -5,20 +5,22 @@ body {
 .content {
     display: grid;
     grid-template-columns: 33% 33% 33%;
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
-    row-gap: 20px;
+    grid-template-rows: auto auto auto;
 }
 
 .question {
     grid-row: 1 / 2;
     grid-column: 1 / 4;
     font-weight: bold;
-    font-size: 24px;
+    font-size: 28px;
+    margin: 25px 25px;
+    padding-top: 25px;
 }
 
 .answers {
     padding: 15px;
     font-size: 18px;
+    margin: 5px 5px;
 }
 
 #answer-0 {
@@ -51,8 +53,22 @@ body {
     color: #af5a5a;
 }
 
+.hover:hover {
+    color: #840bff;
+}
+
 .countdown {
     height: 75px;
     font-size: 20px;
     line-height: 30px;
+    margin: 30px;
+}
+
+.start {
+    font-weight: bold;
+    padding: 15px 25px;
+    font-size: 16px;
+    color: #64b4fa;
+    background-color: #001932;
+    border: none;
 }
