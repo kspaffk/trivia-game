@@ -54,7 +54,47 @@ var bigbangQList = [
         "Who does Sheldon recruit to start his own Comicon?",
         ["Carrie Fisher", "Leonard Nimoy", "Bill Gates", "James Earl Jones"],
         3
-    )
+    ),
+    new bigbangQuestion(
+        "Why does Sheldon think he's not crazy?",
+        [
+            "His mom had him tested", 
+            "He's smarter than everyone",
+            "He's an astrophysicist",
+            "His world make sense"
+        ],
+        0
+    ),
+    new bigbangQuestion(
+        "What do the NASA astronauts call Howard?",
+        [
+            "Rocket Man",
+            "Buzz Lightyear",
+            "Froot Loops",
+            "Momma's Boy"
+        ],
+        2
+    ),
+    new bigbangQuestion(
+        "What state is Penny from?",
+        ["Texas", "Nebraska", "Kansas", "Missouri"],
+        1
+    ),
+    new bigbangQuestion(
+        "What is Raj's dog's name?",
+        ["Cinnamon", "Snoopy", "Rascal", "Churro"],
+        0
+    ),
+    new bigbangQuestion(
+        "In a world where mankind is ruled by a giant intelligent beaver, what food is no longer consumed?",
+        [
+            "BLT where B stands for Beaver",
+            "Cinnamon",
+            "cheese Danish",
+            "French fries"
+        ],
+        2
+    ),
 ];
 
 var intervalID;
@@ -149,9 +189,9 @@ function endGame() {
     $(".answers").removeClass("answer-correct answer-wrong");
     $(".answers").empty();
     // replace question div with winning statement
-    if (correctResponses < 15) {
+    if ((correctResponses / bigbangQList.length) < .6 ) {
         $(".question").html("You correctly answered <span class='number-correct'>" + correctResponses + "</span> questions out of " + bigbangQList.length + ". Would you care for a Milk Dud?");
-    } else if (correctResponses < 20) {
+    } else if ((correctResponses / bigbangQList.length) < .8 ) {
         $(".question").html("You correctly answered <span class='number-correct'>" + correctResponses + "</span> questions out of " + bigbangQList.length + ". You can use Sheldon's parking spot!")
     } else {
         $(".question").html("You correctly answered <span class='number-correct'>" + correctResponses + "</span> questions out of " + bigbangQList.length + ". Sheldon honors you with a napkin with the DNA of Lenord Nimoy!")
